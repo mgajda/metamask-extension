@@ -1,4 +1,5 @@
 // This script lists all dependencies that have package install scripts
+
 const path = require('path')
 const readInstalled = require('read-installed')
 
@@ -14,7 +15,9 @@ readInstalled('./', { dev: true }, function (err, data) {
     const packageScripts = packageData.scripts || {}
     const scriptKeys = Reflect.ownKeys(packageScripts)
 
-    const hasInstallScript = installScripts.some((installKey) => scriptKeys.includes(installKey))
+    const hasInstallScript = installScripts.some((installKey) =>
+      scriptKeys.includes(installKey),
+    )
     if (!hasInstallScript) {
       return
     }

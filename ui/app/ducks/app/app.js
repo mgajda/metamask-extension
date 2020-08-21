@@ -1,10 +1,12 @@
 import * as actionConstants from '../../store/actionConstants'
 
 // actionConstants
+
 const SET_THREEBOX_LAST_UPDATED = 'metamask/app/SET_THREEBOX_LAST_UPDATED'
 
-export default function reduceApp (state = {}, action) {
+export default function reduceApp(state = {}, action) {
   // default state
+
   const appState = {
     shouldClose: false,
     menuOpen: false,
@@ -31,9 +33,13 @@ export default function reduceApp (state = {}, action) {
     accountDetail: {
       subview: 'transactions',
     },
+
     // Used to display loading indicator
+
     isLoading: false,
+
     // Used to display error text
+
     warning: null,
     buyView: {},
     isMouseUser: false,
@@ -56,6 +62,7 @@ export default function reduceApp (state = {}, action) {
 
   switch (action.type) {
     // dropdown methods
+
     case actionConstants.NETWORK_DROPDOWN_OPEN:
       return {
         ...appState,
@@ -69,6 +76,7 @@ export default function reduceApp (state = {}, action) {
       }
 
     // sidebar methods
+
     case actionConstants.SIDEBAR_OPEN:
       return {
         ...appState,
@@ -88,6 +96,7 @@ export default function reduceApp (state = {}, action) {
       }
 
     // alert methods
+
     case actionConstants.ALERT_OPEN:
       return {
         ...appState,
@@ -103,6 +112,7 @@ export default function reduceApp (state = {}, action) {
       }
 
     // qr scanner methods
+
     case actionConstants.QR_CODE_DETECTED:
       return {
         ...appState,
@@ -110,6 +120,7 @@ export default function reduceApp (state = {}, action) {
       }
 
     // modal methods:
+
     case actionConstants.MODAL_OPEN: {
       const { name, ...modalProps } = action.payload
 
@@ -161,7 +172,7 @@ export default function reduceApp (state = {}, action) {
         warning: null,
       }
 
-      // accounts
+    // accounts
 
     case actionConstants.GO_HOME:
       return {
@@ -177,7 +188,9 @@ export default function reduceApp (state = {}, action) {
     case actionConstants.SHOW_ACCOUNT_DETAIL:
       return {
         ...appState,
-        forgottenPassword: appState.forgottenPassword ? !appState.forgottenPassword : null,
+        forgottenPassword: appState.forgottenPassword
+          ? !appState.forgottenPassword
+          : null,
         accountDetail: {
           subview: 'transactions',
           accountExport: 'none',
@@ -212,7 +225,9 @@ export default function reduceApp (state = {}, action) {
       }
       return {
         ...appState,
+
         // indicate notification should close
+
         shouldClose: true,
         warning: null,
         txId: null,
@@ -366,7 +381,8 @@ export default function reduceApp (state = {}, action) {
 }
 
 // Action Creators
-export function setThreeBoxLastUpdated (lastUpdated) {
+
+export function setThreeBoxLastUpdated(lastUpdated) {
   return {
     type: SET_THREEBOX_LAST_UPDATED,
     value: lastUpdated,

@@ -7,9 +7,10 @@ const version = 40
  * ProviderApprovalController is removed. This migration deletes all
  * ProviderApprovalController state.
  */
+
 export default {
   version,
-  async migrate (originalVersionedData) {
+  async migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     const state = versionedData.data
@@ -18,7 +19,7 @@ export default {
   },
 }
 
-function transformState (state) {
+function transformState(state) {
   delete state.ProviderApprovalController
   return state
 }

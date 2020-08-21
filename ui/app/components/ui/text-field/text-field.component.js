@@ -46,7 +46,9 @@ const styles = {
       borderBottom: '2px solid #fff',
     },
   },
+
   // Non-material styles
+
   formLabel: {
     '&$formLabelFocused': {
       color: '#5b5b5b',
@@ -109,7 +111,12 @@ const getMaterialThemeInputProps = ({
 
 const getMaterialWhitePaddedThemeInputProps = ({
   dir,
-  classes: { materialWhitePaddedRoot, materialWhitePaddedFocused, materialWhitePaddedInput, materialWhitePaddedUnderline },
+  classes: {
+    materialWhitePaddedRoot,
+    materialWhitePaddedFocused,
+    materialWhitePaddedInput,
+    materialWhitePaddedUnderline,
+  },
   startAdornment,
 }) => ({
   InputProps: {
@@ -128,7 +135,16 @@ const getMaterialWhitePaddedThemeInputProps = ({
 
 const getBorderedThemeInputProps = ({
   dir,
-  classes: { formLabel, formLabelFocused, materialError, largeInputLabel, inputLabel, inputRoot, input, inputFocused },
+  classes: {
+    formLabel,
+    formLabelFocused,
+    materialError,
+    largeInputLabel,
+    inputLabel,
+    inputRoot,
+    input,
+    inputFocused,
+  },
   largeLabel,
   startAdornment,
 }) => ({
@@ -156,8 +172,8 @@ const getBorderedThemeInputProps = ({
 })
 
 const themeToInputProps = {
-  'material': getMaterialThemeInputProps,
-  'bordered': getBorderedThemeInputProps,
+  material: getMaterialThemeInputProps,
+  bordered: getBorderedThemeInputProps,
   'material-white-padded': getMaterialWhitePaddedThemeInputProps,
 }
 
@@ -170,7 +186,12 @@ const TextField = ({
   dir,
   ...textFieldProps
 }) => {
-  const inputProps = themeToInputProps[theme]({ classes, startAdornment, largeLabel, dir })
+  const inputProps = themeToInputProps[theme]({
+    classes,
+    startAdornment,
+    largeLabel,
+    dir,
+  })
 
   return (
     <MaterialTextField

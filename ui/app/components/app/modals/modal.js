@@ -9,6 +9,7 @@ import { getEnvironmentType } from '../../../../../app/scripts/lib/util'
 import { ENVIRONMENT_TYPE_POPUP } from '../../../../../app/scripts/lib/enums'
 
 // Modal Components
+
 import ConfirmCustomizeGasModal from '../gas-customization/gas-modal-page-container'
 import DepositEtherModal from './deposit-ether-modal'
 import AccountDetailsModal from './account-details-modal'
@@ -53,7 +54,9 @@ const modalContainerMobileStyle = {
 const accountModalStyle = {
   mobileModalStyle: {
     width: '95%',
+
     // top: isPopupOrNotification() === 'popup' ? '52vh' : '36.5vh',
+
     boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 2px 2px',
     borderRadius: '4px',
     top: '10%',
@@ -64,7 +67,9 @@ const accountModalStyle = {
   },
   laptopModalStyle: {
     width: '360px',
+
     // top: 'calc(33% + 45px)',
+
     boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 2px 2px',
     borderRadius: '4px',
     top: '10%',
@@ -206,7 +211,12 @@ const MODALS = {
   },
 
   GAS_PRICE_INFO_MODAL: {
-    contents: <NotifcationModal header="gasPriceNoDenom" message="gasPriceInfoModalContent" />,
+    contents: (
+      <NotifcationModal
+        header="gasPriceNoDenom"
+        message="gasPriceInfoModalContent"
+      />
+    ),
     mobileModalStyle: {
       width: '95%',
       top: getEnvironmentType() === ENVIRONMENT_TYPE_POPUP ? '52vh' : '36.5vh',
@@ -218,7 +228,9 @@ const MODALS = {
   },
 
   GAS_LIMIT_INFO_MODAL: {
-    contents: <NotifcationModal header="gasLimit" message="gasLimitInfoModalContent" />,
+    contents: (
+      <NotifcationModal header="gasLimit" message="gasLimitInfoModalContent" />
+    ),
     mobileModalStyle: {
       width: '95%',
       top: getEnvironmentType() === ENVIRONMENT_TYPE_POPUP ? '52vh' : '36.5vh',
@@ -386,14 +398,14 @@ const BACKDROPSTYLE = {
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
   return {
     active: state.appState.modal.open,
     modalState: state.appState.modal.modalState,
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
     hideModal: (customOnHideOpts) => {
       dispatch(actions.hideModal())
@@ -404,7 +416,6 @@ function mapDispatchToProps (dispatch) {
     hideWarning: () => {
       dispatch(actions.hideWarning())
     },
-
   }
 }
 
@@ -416,15 +427,15 @@ class Modal extends Component {
     modalState: PropTypes.object.isRequired,
   }
 
-  hide () {
+  hide() {
     this.modalRef.hide()
   }
 
-  show () {
+  show() {
     this.modalRef.show()
   }
 
-  UNSAFE_componentWillReceiveProps (nextProps, _) {
+  UNSAFE_componentWillReceiveProps(nextProps, _) {
     if (nextProps.active) {
       this.show()
     } else if (this.props.active) {
@@ -432,10 +443,11 @@ class Modal extends Component {
     }
   }
 
-  render () {
+  render() {
     const modal = MODALS[this.props.modalState.name || 'DEFAULT']
     const { contents: children, disableBackdropClick = false } = modal
-    const modalStyle = modal[isMobileView() ? 'mobileModalStyle' : 'laptopModalStyle']
+    const modalStyle =
+      modal[isMobileView() ? 'mobileModalStyle' : 'laptopModalStyle']
     const contentStyle = modal.contentStyle || {}
 
     return (

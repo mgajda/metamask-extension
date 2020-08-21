@@ -4,6 +4,7 @@
 normalizes txParams on unconfirmed txs
 
 */
+
 import ethUtil from 'ethereumjs-util'
 
 import { cloneDeep } from 'lodash'
@@ -13,7 +14,7 @@ const version = 25
 export default {
   version,
 
-  async migrate (originalVersionedData) {
+  async migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     const state = versionedData.data
@@ -23,27 +24,30 @@ export default {
   },
 }
 
-function transformState (state) {
+function transformState(state) {
   const newState = state
 
   if (newState.TransactionController) {
     if (newState.TransactionController.transactions) {
       const { transactions } = newState.TransactionController
-      newState.TransactionController.transactions = transactions.map((txMeta) => {
-        if (txMeta.status !== 'unapproved') {
+      newState.TransactionController.transactions = transactions.map(
+        (txMeta) => {
+          if (txMeta.status !== 'unapproved') {
+            return txMeta
+          }
+          txMeta.txParams = normalizeTxParams(txMeta.txParams)
           return txMeta
-        }
-        txMeta.txParams = normalizeTxParams(txMeta.txParams)
-        return txMeta
-      })
+        },
+      )
     }
   }
 
   return newState
 }
 
-function normalizeTxParams (txParams) {
+function normalizeTxParams(txParams) {
   // functions that handle normalizing of that key in txParams
+
   const whiteList = {
     from: (from) => ethUtil.addHexPrefix(from).toLowerCase(),
     to: () => ethUtil.addHexPrefix(txParams.to).toLowerCase(),
@@ -55,6 +59,7 @@ function normalizeTxParams (txParams) {
   }
 
   // apply only keys in the whiteList
+
   const normalizedTxParams = {}
   Object.keys(whiteList).forEach((key) => {
     if (txParams[key]) {

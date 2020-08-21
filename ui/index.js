@@ -11,9 +11,15 @@ import Root from './app/pages'
 import * as actions from './app/store/actions'
 import configureStore from './app/store/store'
 import txHelper from './lib/tx-helper'
-import { fetchLocale, loadRelativeTimeFormatLocaleData } from './app/helpers/utils/i18n-helper'
+import {
+  fetchLocale,
+  loadRelativeTimeFormatLocaleData,
+} from './app/helpers/utils/i18n-helper'
 import switchDirection from './app/helpers/utils/switch-direction'
-import { getPermittedAccountsForCurrentTab, getSelectedAddress } from './app/selectors'
+import {
+  getPermittedAccountsForCurrentTab,
+  getSelectedAddress,
+} from './app/selectors'
 import { ALERT_STATE } from './app/ducks/alerts/unconnected-account'
 import {
   getUnconnectedAccountAlertEnabledness,
@@ -22,25 +28,27 @@ import {
 
 log.setLevel(global.METAMASK_DEBUG ? 'debug' : 'warn')
 
-export default function launchMetamaskUi (opts, cb) {
+export default function launchMetamaskUi(opts, cb) {
   const { backgroundConnection } = opts
   actions._setBackgroundConnection(backgroundConnection)
+
   // check if we are unlocked first
+
   backgroundConnection.getState(function (err, metamaskState) {
     if (err) {
       cb(err)
       return
     }
-    startApp(metamaskState, backgroundConnection, opts)
-      .then((store) => {
-        setupDebuggingHelpers(store)
-        cb(null, store)
-      })
+    startApp(metamaskState, backgroundConnection, opts).then((store) => {
+      setupDebuggingHelpers(store)
+      cb(null, store)
+    })
   })
 }
 
-async function startApp (metamaskState, backgroundConnection, opts) {
+async function startApp(metamaskState, backgroundConnection, opts) {
   // parse opts
+
   if (!metamaskState.featureFlags) {
     metamaskState.featureFlags = {}
   }
@@ -63,9 +71,11 @@ async function startApp (metamaskState, backgroundConnection, opts) {
     activeTab: opts.activeTab,
 
     // metamaskState represents the cross-tab state
+
     metamask: metamaskState,
 
     // appState represents the current tab's popup state
+
     appState: {},
 
     localeMessages: {
@@ -76,10 +86,16 @@ async function startApp (metamaskState, backgroundConnection, opts) {
 
   if (getEnvironmentType() === ENVIRONMENT_TYPE_POPUP) {
     const { origin } = draftInitialState.activeTab
-    const permittedAccountsForCurrentTab = getPermittedAccountsForCurrentTab(draftInitialState)
+    const permittedAccountsForCurrentTab = getPermittedAccountsForCurrentTab(
+      draftInitialState,
+    )
     const selectedAddress = getSelectedAddress(draftInitialState)
-    const unconnectedAccountAlertShownOrigins = getUnconnectedAccountAlertShown(draftInitialState)
-    const unconnectedAccountAlertIsEnabled = getUnconnectedAccountAlertEnabledness(draftInitialState)
+    const unconnectedAccountAlertShownOrigins = getUnconnectedAccountAlertShown(
+      draftInitialState,
+    )
+    const unconnectedAccountAlertIsEnabled = getUnconnectedAccountAlertEnabledness(
+      draftInitialState,
+    )
 
     if (
       origin &&
@@ -88,7 +104,9 @@ async function startApp (metamaskState, backgroundConnection, opts) {
       permittedAccountsForCurrentTab.length > 0 &&
       !permittedAccountsForCurrentTab.includes(selectedAddress)
     ) {
-      draftInitialState[ALERT_TYPES.unconnectedAccount] = { state: ALERT_STATE.OPEN }
+      draftInitialState[ALERT_TYPES.unconnectedAccount] = {
+        state: ALERT_STATE.OPEN,
+      }
       actions.setUnconnectedAccountAlertShown(origin)
     }
   }
@@ -96,6 +114,7 @@ async function startApp (metamaskState, backgroundConnection, opts) {
   const store = configureStore(draftInitialState)
 
   // if unconfirmed txs, start on txConf page
+
   const unapprovedTxsAll = txHelper(
     metamaskState.unapprovedTxs,
     metamaskState.unapprovedMsgs,
@@ -107,9 +126,11 @@ async function startApp (metamaskState, backgroundConnection, opts) {
   )
   const numberOfUnapprivedTx = unapprovedTxsAll.length
   if (numberOfUnapprivedTx > 0) {
-    store.dispatch(actions.showConfTxPage({
-      id: unapprovedTxsAll[0].id,
-    }))
+    store.dispatch(
+      actions.showConfTxPage({
+        id: unapprovedTxsAll[0].id,
+      }),
+    )
   }
 
   backgroundConnection.on('update', function (state) {
@@ -130,12 +151,8 @@ async function startApp (metamaskState, backgroundConnection, opts) {
   }
 
   // start app
-  render(
-    <Root
-      store={store}
-    />,
-    opts.container,
-  )
+
+  render(<Root store={store} />, opts.container)
 
   return store
 }
@@ -152,22 +169,19 @@ async function startApp (metamaskState, backgroundConnection, opts) {
  * @param {Object} object - The object to mask
  * @param {Object<Object|boolean>} mask - The mask to apply to the object
  */
-function maskObject (object, mask) {
-  return Object.keys(object)
-    .reduce(
-      (state, key) => {
-        if (mask[key] === true) {
-          state[key] = object[key]
-        } else if (mask[key]) {
-          state[key] = maskObject(object[key], mask[key])
-        }
-        return state
-      },
-      {},
-    )
+
+function maskObject(object, mask) {
+  return Object.keys(object).reduce((state, key) => {
+    if (mask[key] === true) {
+      state[key] = object[key]
+    } else if (mask[key]) {
+      state[key] = maskObject(object[key], mask[key])
+    }
+    return state
+  }, {})
 }
 
-function setupDebuggingHelpers (store) {
+function setupDebuggingHelpers(store) {
   window.getCleanAppState = function () {
     const state = clone(store.getState())
     state.version = global.platform.getVersion()

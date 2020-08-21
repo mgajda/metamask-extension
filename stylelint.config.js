@@ -28,7 +28,9 @@ module.exports = {
         ignore: ['stylelint-commands'],
       },
     ],
+
     // 'comment-whitespace-inside': 'always',
+
     'custom-property-empty-line-before': [
       'always',
       {
@@ -63,7 +65,9 @@ module.exports = {
     'function-whitespace-after': 'always',
     indentation: 2,
     'length-zero-no-unit': true,
+
     // 'max-empty-lines': 1,
+
     'media-feature-colon-space-after': 'always',
     'media-feature-colon-space-before': 'never',
     'media-feature-name-case': 'lower',
@@ -100,7 +104,9 @@ module.exports = {
     'selector-pseudo-element-colon-notation': 'double',
     'selector-type-case': 'lower',
     'unit-case': 'lower',
+
     // 'value-keyword-case': 'lower',
+
     'value-list-comma-newline-after': 'always-multi-line',
     'value-list-comma-space-after': 'always-single-line',
     'value-list-comma-space-before': 'never',
@@ -112,11 +118,14 @@ module.exports = {
     // 'font-family-name-quotes': 'always-where-recommended',
     // 'font-weight-notation': 'numeric',
     // 'function-url-quotes': 'always',
+
     'value-no-vendor-prefix': true,
     'value-list-comma-newline-before': 'never-multi-line',
+
     // 'selector-attribute-quotes': 'always',
     // 'selector-max-specificity': '0,5,2',
     // 'max-nesting-depth': 3,
+
     'no-unknown-animations': true,
   },
 }

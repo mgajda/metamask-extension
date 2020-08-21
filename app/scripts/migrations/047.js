@@ -5,9 +5,10 @@ const version = 47
 /**
  * Stringify the `metamaskNetworkId` property of all transactions
  */
+
 export default {
   version,
-  async migrate (originalVersionedData) {
+  async migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     const state = versionedData.data
@@ -16,7 +17,7 @@ export default {
   },
 }
 
-function transformState (state) {
+function transformState(state) {
   const transactions = state?.TransactionController?.transactions
   if (Array.isArray(transactions)) {
     transactions.forEach((transaction) => {

@@ -45,6 +45,7 @@ export const DEPOSIT_TRANSACTION_KEY = 'deposit'
 
 // Transaction List Item Categories
 // Used for UI distinction between transactions in the history list
+
 export const TRANSACTION_CATEGORY_SEND = 'send'
 export const TRANSACTION_CATEGORY_RECEIVE = 'receive'
 export const TRANSACTION_CATEGORY_INTERACTION = 'interaction'

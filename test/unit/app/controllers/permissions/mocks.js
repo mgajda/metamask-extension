@@ -1,8 +1,7 @@
 import { ethErrors, ERROR_CODES } from 'eth-json-rpc-errors'
 import deepFreeze from 'deep-freeze-strict'
 
-import _getRestrictedMethods
-  from '../../../../../app/scripts/controllers/permissions/restrictedMethods'
+import _getRestrictedMethods from '../../../../../app/scripts/controllers/permissions/restrictedMethods'
 
 import {
   CAVEAT_NAMES,
@@ -36,24 +35,23 @@ const keyringAccounts = deepFreeze([
 const getKeyringAccounts = async () => [...keyringAccounts]
 
 const getIdentities = () => {
-  return keyringAccounts.reduce(
-    (identities, address, index) => {
-      identities[address] = { address, name: `Account ${index}` }
-      return identities
-    },
-    {},
-  )
+  return keyringAccounts.reduce((identities, address, index) => {
+    identities[address] = { address, name: `Account ${index}` }
+    return identities
+  }, {})
 }
 
 // perm controller initialization helper
+
 const getRestrictedMethods = (permController) => {
   return {
-
     // the actual, production restricted methods
+
     ..._getRestrictedMethods(permController),
 
     // our own dummy method for testing
-    'test_method': {
+
+    test_method: {
       description: `This method is only for testing.`,
       method: (req, res, __, end) => {
         if (req.params[0]) {
@@ -74,7 +72,8 @@ const getUnlockPromise = () => Promise.resolve()
  *
  * @returns {Object} A PermissionsController constructor options object.
  */
-export function getPermControllerOpts () {
+
+export function getPermControllerOpts() {
   return {
     showPermissionRequest: noop,
     getKeyringAccounts,
@@ -103,18 +102,19 @@ export function getPermControllerOpts () {
  * @param {string} extensionId - The extension id for the middleware.
  * @returns {Function} A Promise-wrapped middleware function with convenient default args.
  */
-export function getPermissionsMiddleware (permController, origin, extensionId) {
+
+export function getPermissionsMiddleware(permController, origin, extensionId) {
   const middleware = permController.createMiddleware({ origin, extensionId })
   return (req, res = {}, next = noop, end) => {
     return new Promise((resolve, reject) => {
-
       // eslint-disable-next-line no-param-reassign
       end = end || _end
 
       middleware(req, res, next, end)
 
       // emulates json-rpc-engine error handling
-      function _end (err) {
+
+      function _end(err) {
         if (err || res.error) {
           reject(err || res.error)
         } else {
@@ -131,7 +131,11 @@ export function getPermissionsMiddleware (permController, origin, extensionId) {
  * @returns {Function} A function passed to the permissions controller at initialization,
  * for recording notifications.
  */
-export const getNotifyDomain = (notifications = {}) => (origin, notification) => {
+
+export const getNotifyDomain = (notifications = {}) => (
+  origin,
+  notification,
+) => {
   notifications[origin].push(notification)
 }
 
@@ -141,6 +145,7 @@ export const getNotifyDomain = (notifications = {}) => (origin, notification) =>
  * @returns {Function} A function passed to the permissions controller at initialization,
  * for recording notifications.
  */
+
 export const getNotifyAllDomains = (notifications = {}) => (notification) => {
   Object.keys(notifications).forEach((origin) => {
     notifications[origin].push(notification)
@@ -182,24 +187,28 @@ const ACCOUNTS = {
 /**
  * Helpers for getting mock caveats.
  */
-const CAVEATS = {
 
+const CAVEATS = {
   /**
    * Gets a correctly formatted eth_accounts exposedAccounts caveat.
    *
    * @param {Array<string>} accounts - The accounts for the caveat
    * @returns {Object} An eth_accounts exposedAccounts caveats
    */
+
   eth_accounts: (accounts) => {
-    return [{
-      type: CAVEAT_TYPES.limitResponseLength,
-      value: 1,
-      name: CAVEAT_NAMES.primaryAccountOnly,
-    }, {
-      type: CAVEAT_TYPES.filterResponse,
-      value: accounts,
-      name: CAVEAT_NAMES.exposedAccounts,
-    }]
+    return [
+      {
+        type: CAVEAT_TYPES.limitResponseLength,
+        value: 1,
+        name: CAVEAT_NAMES.primaryAccountOnly,
+      },
+      {
+        type: CAVEAT_TYPES.filterResponse,
+        value: accounts,
+        name: CAVEAT_NAMES.exposedAccounts,
+      },
+    ]
   },
 }
 
@@ -207,13 +216,14 @@ const CAVEATS = {
  * Each function here corresponds to what would be a type or interface consumed
  * by permissions controller functions if we used TypeScript.
  */
-const PERMS = {
 
+const PERMS = {
   /**
    * The argument to approvePermissionsRequest
    * @param {string} id - The rpc-cap permissions request id.
    * @param {Object} permissions - The approved permissions, request-formatted.
    */
+
   approvedRequest: (id, permissions = {}) => {
     return {
       permissions: { ...permissions },
@@ -224,11 +234,12 @@ const PERMS = {
   /**
    * Requested permissions objects, as passed to wallet_requestPermissions.
    */
-  requests: {
 
+  requests: {
     /**
      * @returns {Object} A permissions request object with eth_accounts
      */
+
     eth_accounts: () => {
       return { eth_accounts: {} }
     },
@@ -236,6 +247,7 @@ const PERMS = {
     /**
      * @returns {Object} A permissions request object with test_method
      */
+
     test_method: () => {
       return { test_method: {} }
     },
@@ -243,6 +255,7 @@ const PERMS = {
     /**
      * @returns {Object} A permissions request object with does_not_exist
      */
+
     does_not_exist: () => {
       return { does_not_exist: {} }
     },
@@ -251,12 +264,13 @@ const PERMS = {
   /**
    * Finalized permission requests, as returned by finalizePermissionsRequest
    */
-  finalizedRequests: {
 
+  finalizedRequests: {
     /**
      * @param {Array<string>} accounts - The accounts for the eth_accounts permission caveat
      * @returns {Object} A finalized permissions request object with eth_accounts and its caveat
      */
+
     eth_accounts: (accounts) => {
       return {
         eth_accounts: {
@@ -268,6 +282,7 @@ const PERMS = {
     /**
      * @returns {Object} A finalized permissions request object with test_method
      */
+
     test_method: () => {
       return {
         test_method: {},
@@ -280,12 +295,13 @@ const PERMS = {
    * - wallet_requestPermissions
    * - wallet_getPermissions
    */
-  granted: {
 
+  granted: {
     /**
      * @param {Array<string>} accounts - The accounts for the eth_accounts permission caveat
      * @returns {Object} A granted permissions object with eth_accounts and its caveat
      */
+
     eth_accounts: (accounts) => {
       return {
         parentCapability: PERM_NAMES.eth_accounts,
@@ -296,6 +312,7 @@ const PERMS = {
     /**
      * @returns {Object} A granted permissions object with test_method
      */
+
     test_method: () => {
       return {
         parentCapability: PERM_NAMES.test_method,
@@ -308,8 +325,8 @@ const PERMS = {
  * Objects with function values for getting correctly formatted permissions,
  * caveats, errors, permissions requests etc.
  */
-export const getters = deepFreeze({
 
+export const getters = deepFreeze({
   CAVEATS,
 
   PERMS,
@@ -317,10 +334,9 @@ export const getters = deepFreeze({
   /**
    * Getters for errors by the method or workflow that throws them.
    */
+
   ERRORS: {
-
     validatePermittedAccounts: {
-
       invalidParam: () => {
         return {
           name: 'Error',
@@ -340,6 +356,7 @@ export const getters = deepFreeze({
       grantEthAcountsFailure: (origin) => {
         return {
           // name: 'EthereumRpcError',
+
           message: `Failed to add 'eth_accounts' to '${origin}'.`,
           code: ERROR_CODES.rpc.internal,
         }
@@ -466,13 +483,14 @@ export const getters = deepFreeze({
   /**
    * Getters for notifications produced by the permissions controller.
    */
-  NOTIFICATIONS: {
 
+  NOTIFICATIONS: {
     /**
      * Gets a removed accounts notification.
      *
      * @returns {Object} An accountsChanged notification with an empty array as its result
      */
+
     removedAccounts: () => {
       return {
         method: NOTIFICATION_NAMES.accountsChanged,
@@ -486,6 +504,7 @@ export const getters = deepFreeze({
      * @param {Array<string>} accounts - The accounts added to the notification.
      * @returns {Object} An accountsChanged notification with the given accounts as its result
      */
+
     newAccounts: (accounts) => {
       return {
         method: NOTIFICATION_NAMES.accountsChanged,
@@ -497,8 +516,8 @@ export const getters = deepFreeze({
   /**
    * Getters for mock RPC request objects.
    */
-  RPC_REQUESTS: {
 
+  RPC_REQUESTS: {
     /**
      * Gets an arbitrary RPC request object.
      *
@@ -508,6 +527,7 @@ export const getters = deepFreeze({
      * @param {string} [id] - The request id
      * @returns {Object} An RPC request object
      */
+
     custom: (origin, method, params = [], id) => {
       const req = {
         origin,
@@ -526,6 +546,7 @@ export const getters = deepFreeze({
      * @param {string} origin - The origin of the request
      * @returns {Object} An RPC request object
      */
+
     eth_accounts: (origin) => {
       return {
         origin,
@@ -541,6 +562,7 @@ export const getters = deepFreeze({
      * @param {boolean} param - The request param
      * @returns {Object} An RPC request object
      */
+
     test_method: (origin, param = false) => {
       return {
         origin,
@@ -555,6 +577,7 @@ export const getters = deepFreeze({
      * @param {string} origin - The origin of the request
      * @returns {Object} An RPC request object
      */
+
     eth_requestAccounts: (origin) => {
       return {
         origin,
@@ -571,6 +594,7 @@ export const getters = deepFreeze({
      * @param {string} permissionName - The name of the permission to request
      * @returns {Object} An RPC request object
      */
+
     requestPermission: (origin, permissionName) => {
       return {
         origin,
@@ -587,6 +611,7 @@ export const getters = deepFreeze({
      * @param {Object} permissions - A permission request object
      * @returns {Object} An RPC request object
      */
+
     requestPermissions: (origin, permissions = {}) => {
       return {
         origin,
@@ -603,6 +628,7 @@ export const getters = deepFreeze({
      * @param {Array<any>} [args] - Any other data for the request's domainMetadata
      * @returns {Object} An RPC request object
      */
+
     wallet_sendDomainMetadata: (origin, name, ...args) => {
       return {
         origin,
@@ -619,6 +645,7 @@ export const getters = deepFreeze({
 /**
  * Objects with immutable mock values.
  */
+
 export const constants = deepFreeze({
   ALL_ACCOUNTS: keyringAccounts,
 
@@ -638,16 +665,13 @@ export const constants = deepFreeze({
 
   PERM_NAMES: { ...PERM_NAMES },
 
-  RESTRICTED_METHODS: [
-    'eth_accounts',
-    'test_method',
-  ],
+  RESTRICTED_METHODS: ['eth_accounts', 'test_method'],
 
   /**
    * Mock permissions history objects.
    */
-  EXPECTED_HISTORIES: {
 
+  EXPECTED_HISTORIES: {
     case1: [
       {
         [DOMAINS.a.origin]: {

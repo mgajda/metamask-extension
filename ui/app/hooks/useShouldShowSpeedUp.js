@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react'
  * @param {Object} transactionGroup - the transaction group to check against
  * @param {boolean} isEarliestNonce - Whether this group is currently the earliest nonce
  */
-export function useShouldShowSpeedUp (transactionGroup, isEarliestNonce) {
+
+export function useShouldShowSpeedUp(transactionGroup, isEarliestNonce) {
   const { transactions, hasRetried } = transactionGroup
   const [earliestTransaction = {}] = transactions
   const { submittedTime } = earliestTransaction
@@ -22,6 +23,7 @@ export function useShouldShowSpeedUp (transactionGroup, isEarliestNonce) {
     // also immediately set retryEnabled and not create a timeout if the
     // condition is already met. This effect will run anytime the variables
     // for determining enabled status change
+
     let timeoutId
     if (!hasRetried && isEarliestNonce && !speedUpEnabled) {
       if (Date.now() - submittedTime > 5000) {
@@ -33,8 +35,10 @@ export function useShouldShowSpeedUp (transactionGroup, isEarliestNonce) {
         }, 5001 - (Date.now() - submittedTime))
       }
     }
+
     // Anytime the effect is re-ran, make sure to remove a previously set timeout
     // so as to avoid multiple timers potentially overlapping
+
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId)

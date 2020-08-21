@@ -7,6 +7,7 @@ import PageContainerFooter from './page-container-footer'
 export default class PageContainer extends PureComponent {
   static propTypes = {
     // PageContainerHeader props
+
     backButtonString: PropTypes.string,
     backButtonStyles: PropTypes.object,
     headerCloseText: PropTypes.string,
@@ -15,12 +16,18 @@ export default class PageContainer extends PureComponent {
     showBackButton: PropTypes.bool,
     subtitle: PropTypes.string,
     title: PropTypes.string.isRequired,
+
     // Tabs-related props
+
     defaultActiveTabIndex: PropTypes.number,
     tabsComponent: PropTypes.node,
+
     // Content props
+
     contentComponent: PropTypes.node,
+
     // PageContainerFooter props
+
     cancelText: PropTypes.string,
     disabled: PropTypes.bool,
     hideCancel: PropTypes.bool,
@@ -33,11 +40,11 @@ export default class PageContainer extends PureComponent {
     activeTabIndex: this.props.defaultActiveTabIndex || 0,
   }
 
-  handleTabClick (activeTabIndex) {
+  handleTabClick(activeTabIndex) {
     this.setState({ activeTabIndex })
   }
 
-  renderTabs () {
+  renderTabs() {
     const { tabsComponent } = this.props
 
     if (!tabsComponent) {
@@ -46,18 +53,25 @@ export default class PageContainer extends PureComponent {
 
     const numberOfTabs = React.Children.count(tabsComponent.props.children)
 
-    return React.Children.map(tabsComponent.props.children, (child, tabIndex) => {
-      return child && React.cloneElement(child, {
-        onClick: (index) => this.handleTabClick(index),
-        tabIndex,
-        isActive: numberOfTabs > 1 && tabIndex === this.state.activeTabIndex,
-        key: tabIndex,
-        className: 'page-container__tab',
-      })
-    })
+    return React.Children.map(
+      tabsComponent.props.children,
+      (child, tabIndex) => {
+        return (
+          child &&
+          React.cloneElement(child, {
+            onClick: (index) => this.handleTabClick(index),
+            tabIndex,
+            isActive:
+              numberOfTabs > 1 && tabIndex === this.state.activeTabIndex,
+            key: tabIndex,
+            className: 'page-container__tab',
+          })
+        )
+      },
+    )
   }
 
-  renderActiveTabContent () {
+  renderActiveTabContent() {
     const { tabsComponent } = this.props
     let { children } = tabsComponent.props
     children = children.filter((child) => child)
@@ -68,7 +82,7 @@ export default class PageContainer extends PureComponent {
       : children.props.children
   }
 
-  renderContent () {
+  renderContent() {
     const { contentComponent, tabsComponent } = this.props
 
     if (contentComponent) {
@@ -79,7 +93,7 @@ export default class PageContainer extends PureComponent {
     return null
   }
 
-  render () {
+  render() {
     const {
       title,
       subtitle,
@@ -111,9 +125,7 @@ export default class PageContainer extends PureComponent {
           headerCloseText={headerCloseText}
         />
         <div className="page-container__bottom">
-          <div className="page-container__content">
-            { this.renderContent() }
-          </div>
+          <div className="page-container__content">{this.renderContent()}</div>
           <PageContainerFooter
             onCancel={onCancel}
             cancelText={cancelText}

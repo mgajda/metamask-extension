@@ -4,7 +4,9 @@ import * as utils from './transactions.util'
 describe('Transactions utils', function () {
   describe('getTokenData', function () {
     it('should return token data', function () {
-      const tokenData = utils.getTokenData('0xa9059cbb00000000000000000000000050a9d56c2b8ba9a5c7f2c08c3d26e0499f23a7060000000000000000000000000000000000000000000000000000000000004e20')
+      const tokenData = utils.getTokenData(
+        '0xa9059cbb00000000000000000000000050a9d56c2b8ba9a5c7f2c08c3d26e0499f23a7060000000000000000000000000000000000000000000000000000000000004e20',
+      )
       assert.ok(tokenData)
       const { name, params } = tokenData
       assert.equal(name, 'transfer')
@@ -71,6 +73,7 @@ describe('Transactions utils', function () {
         },
         {
           // test handling of `blockExplorerUrl` for a custom RPC
+
           expected: 'https://block.explorer/tx/0xabcd',
           networkId: '31',
           hash: '0xabcd',
@@ -80,6 +83,7 @@ describe('Transactions utils', function () {
         },
         {
           // test handling of trailing `/` in `blockExplorerUrl` for a custom RPC
+
           expected: 'https://another.block.explorer/tx/0xdef0',
           networkId: '33',
           hash: '0xdef0',
@@ -90,7 +94,10 @@ describe('Transactions utils', function () {
       ]
 
       tests.forEach(({ expected, networkId, hash, rpcPrefs }) => {
-        assert.equal(utils.getBlockExplorerUrlForTx(networkId, hash, rpcPrefs), expected)
+        assert.equal(
+          utils.getBlockExplorerUrlForTx(networkId, hash, rpcPrefs),
+          expected,
+        )
       })
     })
   })

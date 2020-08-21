@@ -10,6 +10,7 @@ const stubMigrations = [
     version: 1,
     migrate: (state) => {
       // clone the data just like we do in migrations
+
       const clonedData = cloneDeep(state)
       clonedData.meta.version = 1
       return Promise.resolve(clonedData)
@@ -41,7 +42,6 @@ const firstTimeState = {
 
 describe('migrations', function () {
   describe('liveMigrations require list', function () {
-
     let migrationNumbers
 
     before(function () {
@@ -49,7 +49,7 @@ describe('migrations', function () {
       migrationNumbers = fileNames
         .reduce((acc, filename) => {
           const name = filename.split('.')[0]
-          if ((/^\d+$/u).test(name)) {
+          if (/^\d+$/u.test(name)) {
             acc.push(name)
           }
           return acc
@@ -60,7 +60,10 @@ describe('migrations', function () {
     it('should include all migrations', function () {
       migrationNumbers.forEach((num) => {
         const migration = liveMigrations.find((m) => m.version === num)
-        assert(migration, `migration not included in 'migrations/index.js': ${num}`)
+        assert(
+          migration,
+          `migration not included in 'migrations/index.js': ${num}`,
+        )
       })
     })
 
@@ -69,7 +72,7 @@ describe('migrations', function () {
       const testNumbers = fileNames
         .reduce((acc, filename) => {
           const name = filename.split('-test.')[0]
-          if ((/^\d+$/u).test(name)) {
+          if (/^\d+$/u.test(name)) {
             acc.push(name)
           }
           return acc
@@ -78,7 +81,10 @@ describe('migrations', function () {
 
       migrationNumbers.forEach((num) => {
         if (num >= 33) {
-          assert.ok(testNumbers.includes(num), `no test found for migration: ${num}`)
+          assert.ok(
+            testNumbers.includes(num),
+            `no test found for migration: ${num}`,
+          )
         }
       })
     })
@@ -100,12 +106,14 @@ describe('migrations', function () {
 
     it('should emit an error', async function () {
       const migrator = new Migrator({
-        migrations: [{
-          version: 1,
-          async migrate () {
-            throw new Error('test')
+        migrations: [
+          {
+            version: 1,
+            async migrate() {
+              throw new Error('test')
+            },
           },
-        }],
+        ],
       })
       await assert.rejects(migrator.migrateData({ meta: { version: 0 } }))
     })

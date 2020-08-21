@@ -8,9 +8,10 @@ const version = 37
  * to the new schema with chainId as a key.
  * and to add the isEns flag to all entries
  */
+
 export default {
   version,
-  async migrate (originalVersionedData) {
+  async migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     const state = versionedData.data
@@ -19,8 +20,7 @@ export default {
   },
 }
 
-function transformState (state) {
-
+function transformState(state) {
   if (state.AddressBookController) {
     const ab = state.AddressBookController.addressBook
 
@@ -28,17 +28,19 @@ function transformState (state) {
     const newAddressBook = {}
 
     // add all of the chainIds to a set
+
     Object.values(ab).forEach((v) => {
       chainIds.add(v.chainId)
     })
 
     // fill the chainId object with the entries with the matching chainId
+
     for (const id of chainIds.values()) {
-    // make an empty object entry for each chainId
+      // make an empty object entry for each chainId
+
       newAddressBook[id] = {}
       for (const address in ab) {
         if (ab[address].chainId === id) {
-
           ab[address].isEns = false
           if (util.normalizeEnsName(ab[address].name)) {
             ab[address].isEns = true

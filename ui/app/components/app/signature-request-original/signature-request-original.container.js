@@ -13,25 +13,27 @@ import { clearConfirmTransaction } from '../../../ducks/confirm-transaction/conf
 import { getMostRecentOverviewPage } from '../../../ducks/history/history'
 import SignatureRequestOriginal from './signature-request-original.component'
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
   return {
     requester: null,
     requesterAddress: null,
     conversionRate: conversionRateSelector(state),
     mostRecentOverviewPage: getMostRecentOverviewPage(state),
+
     // not passed to component
+
     allAccounts: accountsWithSendEtherInfoSelector(state),
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
     goHome: () => dispatch(goHome()),
     clearConfirmTransaction: () => dispatch(clearConfirmTransaction()),
   }
 }
 
-function mergeProps (stateProps, dispatchProps, ownProps) {
+function mergeProps(stateProps, dispatchProps, ownProps) {
   const {
     signPersonalMessage,
     signTypedMessage,
@@ -45,7 +47,10 @@ function mergeProps (stateProps, dispatchProps, ownProps) {
   const { allAccounts } = stateProps
   delete stateProps.allAccounts
 
-  const { type, msgParams: { from } } = txData
+  const {
+    type,
+    msgParams: { from },
+  } = txData
 
   const fromAccount = getAccountByAddress(allAccounts, from)
 

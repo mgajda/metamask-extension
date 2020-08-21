@@ -5,18 +5,24 @@ import contentHash from 'content-hash'
 import registryAbi from './contracts/registry'
 import resolverAbi from './contracts/resolver'
 
-export default async function resolveEnsToIpfsContentId ({ provider, name }) {
+export default async function resolveEnsToIpfsContentId({ provider, name }) {
   const eth = new Eth(provider)
   const hash = namehash.hash(name)
   const contract = new EthContract(eth)
+
   // lookup registry
+
   const chainId = Number.parseInt(await eth.net_version(), 10)
   const registryAddress = getRegistryForChainId(chainId)
   if (!registryAddress) {
-    throw new Error(`EnsIpfsResolver - no known ens-ipfs registry for chainId "${chainId}"`)
+    throw new Error(
+      `EnsIpfsResolver - no known ens-ipfs registry for chainId "${chainId}"`,
+    )
   }
   const Registry = contract(registryAbi).at(registryAddress)
+
   // lookup resolver
+
   const resolverLookupResult = await Registry.resolver(hash)
   const resolverAddress = resolverLookupResult[0]
   if (hexValueIsEmpty(resolverAddress)) {
@@ -33,25 +39,38 @@ export default async function resolveEnsToIpfsContentId ({ provider, name }) {
     const type = contentHash.getCodec(rawContentHash)
 
     if (type === 'ipfs-ns' || type === 'ipns-ns') {
-      decodedContentHash = contentHash.helpers.cidV0ToV1Base32(decodedContentHash)
+      decodedContentHash = contentHash.helpers.cidV0ToV1Base32(
+        decodedContentHash,
+      )
     }
 
     return { type, hash: decodedContentHash }
   }
   if (isLegacyResolver[0]) {
     // lookup content id
+
     const contentLookupResult = await Resolver.content(hash)
     const content = contentLookupResult[0]
     if (hexValueIsEmpty(content)) {
-      throw new Error(`EnsIpfsResolver - no content ID found for name "${name}"`)
+      throw new Error(
+        `EnsIpfsResolver - no content ID found for name "${name}"`,
+      )
     }
     return { type: 'swarm-ns', hash: content.slice(2) }
   }
-  throw new Error(`EnsIpfsResolver - the resolver for name "${name}" is not standard, it should either supports contenthash() or content()`)
+  throw new Error(
+    `EnsIpfsResolver - the resolver for name "${name}" is not standard, it should either supports contenthash() or content()`,
+  )
 }
 
-function hexValueIsEmpty (value) {
-  return [undefined, null, '0x', '0x0', '0x0000000000000000000000000000000000000000000000000000000000000000'].includes(value)
+function hexValueIsEmpty(value) {
+  return [
+    undefined,
+    null,
+    '0x',
+    '0x0',
+    '0x0000000000000000000000000000000000000000000000000000000000000000',
+  ].includes(value)
 }
 
 /**
@@ -59,7 +78,8 @@ function hexValueIsEmpty (value) {
  * @param {number} chainId the chain ID
  * @returns {string|null} the registry address if known, null otherwise
  */
-function getRegistryForChainId (chainId) {
+
+function getRegistryForChainId(chainId) {
   switch (chainId) {
     case 1:
     case 3:

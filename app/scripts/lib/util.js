@@ -19,6 +19,7 @@ import {
 /**
  * @see {@link getEnvironmentType}
  */
+
 const getEnvironmentTypeMemo = memoize((url) => {
   const parsedUrl = new URL(url)
   if (parsedUrl.pathname === '/popup.html') {
@@ -44,7 +45,9 @@ const getEnvironmentTypeMemo = memoize((url) => {
  * @param {string} [url] - the URL of the window
  * @returns {string} the environment ENUM
  */
-const getEnvironmentType = (url = window.location.href) => getEnvironmentTypeMemo(url)
+
+const getEnvironmentType = (url = window.location.href) =>
+  getEnvironmentTypeMemo(url)
 
 /**
  * Returns the platform (browser) where the extension is running.
@@ -52,6 +55,7 @@ const getEnvironmentType = (url = window.location.href) => getEnvironmentTypeMem
  * @returns {string} - the platform ENUM
  *
  */
+
 const getPlatform = (_) => {
   const ua = window.navigator.userAgent
   if (ua.search('Firefox') === -1) {
@@ -80,10 +84,20 @@ const getPlatform = (_) => {
  * @returns {boolean} - Whether the balance is greater than or equal to the value plus the value of gas times gasPrice
  *
  */
-function sufficientBalance (txParams, hexBalance) {
+
+function sufficientBalance(txParams, hexBalance) {
   // validate hexBalance is a hex string
-  assert.equal(typeof hexBalance, 'string', 'sufficientBalance - hexBalance is not a hex string')
-  assert.equal(hexBalance.slice(0, 2), '0x', 'sufficientBalance - hexBalance is not a hex string')
+
+  assert.equal(
+    typeof hexBalance,
+    'string',
+    'sufficientBalance - hexBalance is not a hex string',
+  )
+  assert.equal(
+    hexBalance.slice(0, 2),
+    '0x',
+    'sufficientBalance - hexBalance is not a hex string',
+  )
 
   const balance = hexToBn(hexBalance)
   const value = hexToBn(txParams.value)
@@ -101,7 +115,8 @@ function sufficientBalance (txParams, hexBalance) {
  * @returns {string} - A '0x' prefixed hex string
  *
  */
-function bnToHex (inputBn) {
+
+function bnToHex(inputBn) {
   return ethUtil.addHexPrefix(inputBn.toString(16))
 }
 
@@ -112,7 +127,8 @@ function bnToHex (inputBn) {
  * @returns {Object} - A BN object
  *
  */
-function hexToBn (inputHex) {
+
+function hexToBn(inputHex) {
   return new BN(ethUtil.stripHexPrefix(inputHex), 16)
 }
 
@@ -125,7 +141,8 @@ function hexToBn (inputHex) {
  * @returns {BN} - The product of the multiplication
  *
  */
-function BnMultiplyByFraction (targetBN, numerator, denominator) {
+
+function BnMultiplyByFraction(targetBN, numerator, denominator) {
   const numBN = new BN(numerator)
   const denomBN = new BN(denominator)
   return targetBN.mul(numBN).div(denomBN)
@@ -136,16 +153,21 @@ function BnMultiplyByFraction (targetBN, numerator, denominator) {
  * this is a workaround for the non-standard error object that's used
  * @returns {Error|undefined}
  */
-function checkForError () {
+
+function checkForError() {
   const { lastError } = extension.runtime
   if (!lastError) {
     return undefined
   }
+
   // if it quacks like an Error, its an Error
+
   if (lastError.stack && lastError.message) {
     return lastError
   }
+
   // repair incomplete error object (eg chromium v77)
+
   return new Error(lastError.message)
 }
 

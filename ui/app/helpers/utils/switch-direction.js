@@ -3,6 +3,7 @@
  * @param {('ltr' | 'rtl' | 'auto')} direction - Text direction, either left-to-right (ltr) or right-to-left (rtl)
  * @return {Promise<void>}
  */
+
 const switchDirection = async (direction) => {
   if (direction === 'auto') {
     // eslint-disable-next-line no-param-reassign
@@ -24,7 +25,8 @@ const switchDirection = async (direction) => {
       updatedLink.onload = () => {
         resolve()
       }
-      updatedLink.onerror = () => reject(new Error(`Failed to load '${direction}' stylesheet`))
+      updatedLink.onerror = () =>
+        reject(new Error(`Failed to load '${direction}' stylesheet`))
     })
   }
 

@@ -11,7 +11,7 @@ const version = 6
 export default {
   version,
 
-  migrate (originalVersionedData) {
+  migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     try {
@@ -25,10 +25,11 @@ export default {
   },
 }
 
-function migrateState (state) {
+function migrateState(state) {
   const keyringSubstate = state.KeyringController
 
   // add new state
+
   const newState = {
     ...state,
     PreferencesController: {
@@ -37,6 +38,7 @@ function migrateState (state) {
   }
 
   // rm old state
+
   delete newState.KeyringController.selectedAccount
 
   return newState

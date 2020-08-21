@@ -24,17 +24,22 @@ import { useTokenData } from './useTokenData'
  *                                         with a token.
  * @return {string} - The computed displayValue of the provided transactionData and token
  */
-export function useTokenDisplayValue (transactionData, token, isTokenTransaction = true) {
+
+export function useTokenDisplayValue(
+  transactionData,
+  token,
+  isTokenTransaction = true,
+) {
   const tokenData = useTokenData(transactionData, isTokenTransaction)
   const shouldCalculateTokenValue = Boolean(
     // If we are currently processing a token transaction
     isTokenTransaction &&
-    // and raw transaction data string is provided
-    transactionData &&
-    // and a token object has been provided
-    token &&
-    // and we are able to parse the token details from the raw data
-    tokenData?.params?.length,
+      // and raw transaction data string is provided
+      transactionData &&
+      // and a token object has been provided
+      token &&
+      // and we are able to parse the token details from the raw data
+      tokenData?.params?.length,
   )
 
   const displayValue = useMemo(() => {

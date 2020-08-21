@@ -1,6 +1,7 @@
 // need to make sure we aren't affected by overlapping namespaces
 // and that we dont affect the app with our namespace
 // mostly a fix for web3's BigNumber if AMD's "define" is defined...
+
 let __define
 
 /**
@@ -8,6 +9,7 @@ let __define
  * avoid conflicts with other global define objects, such as
  * AMD's define function
  */
+
 const cleanContextForImports = () => {
   __define = global.define
   try {
@@ -20,6 +22,7 @@ const cleanContextForImports = () => {
 /**
  * Restores global define object from cached reference
  */
+
 const restoreContextAfterImports = () => {
   try {
     global.define = __define
@@ -36,6 +39,7 @@ import LocalMessageDuplexStream from 'post-message-stream'
 import { initProvider } from '@metamask/inpage-provider'
 
 // TODO:deprecate:2020
+
 import setupWeb3 from './lib/setupWeb3'
 /* eslint-enable import/first */
 
@@ -48,6 +52,7 @@ log.setDefaultLevel(process.env.METAMASK_DEBUG ? 'debug' : 'warn')
 //
 
 // setup background connection
+
 const metamaskStream = new LocalMessageDuplexStream({
   name: 'inpage',
   target: 'contentscript',
@@ -69,4 +74,5 @@ if (typeof window.web3 !== 'undefined') {
 }
 
 // proxy web3, assign to window, and set up site auto reload
+
 setupWeb3(log)

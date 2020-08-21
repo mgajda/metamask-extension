@@ -5,32 +5,35 @@
 //
 
 const livereload = require('gulp-livereload')
-const { createTask, composeSeries, composeParallel, detectAndRunEntryTask } = require('./task')
+const {
+  createTask,
+  composeSeries,
+  composeParallel,
+  detectAndRunEntryTask,
+} = require('./task')
 const createManifestTasks = require('./manifest')
 const createScriptTasks = require('./scripts')
 const createStyleTasks = require('./styles')
 const createStaticAssetTasks = require('./static')
 const createEtcTasks = require('./etc')
 
-const browserPlatforms = [
-  'firefox',
-  'chrome',
-  'brave',
-  'opera',
-]
+const browserPlatforms = ['firefox', 'chrome', 'brave', 'opera']
 
 defineAllTasks()
 detectAndRunEntryTask()
 
-function defineAllTasks () {
-
+function defineAllTasks() {
   const staticTasks = createStaticAssetTasks({ livereload, browserPlatforms })
   const manifestTasks = createManifestTasks({ browserPlatforms })
   const styleTasks = createStyleTasks({ livereload })
   const scriptTasks = createScriptTasks({ livereload, browserPlatforms })
-  const { clean, reload, zip } = createEtcTasks({ livereload, browserPlatforms })
+  const { clean, reload, zip } = createEtcTasks({
+    livereload,
+    browserPlatforms,
+  })
 
   // build for development (livereload)
+
   createTask(
     'dev',
     composeSeries(
@@ -46,6 +49,7 @@ function defineAllTasks () {
   )
 
   // build for test development (livereload)
+
   createTask(
     'testDev',
     composeSeries(
@@ -61,35 +65,29 @@ function defineAllTasks () {
   )
 
   // build for prod release
+
   createTask(
     'prod',
     composeSeries(
       clean,
       styleTasks.prod,
-      composeParallel(
-        scriptTasks.prod,
-        staticTasks.prod,
-        manifestTasks.prod,
-      ),
+      composeParallel(scriptTasks.prod, staticTasks.prod, manifestTasks.prod),
       zip,
     ),
   )
 
   // build for CI testing
+
   createTask(
     'test',
     composeSeries(
       clean,
       styleTasks.prod,
-      composeParallel(
-        scriptTasks.test,
-        staticTasks.prod,
-        manifestTasks.test,
-      ),
+      composeParallel(scriptTasks.test, staticTasks.prod, manifestTasks.test),
     ),
   )
 
   // special build for minimal CI testing
-  createTask('styles', styleTasks.prod)
 
+  createTask('styles', styleTasks.prod)
 }

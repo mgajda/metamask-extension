@@ -36,14 +36,14 @@ import {
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendFooter)
 
-function mapStateToProps (state) {
-
+function mapStateToProps(state) {
   const gasButtonInfo = getRenderableEstimateDataForSmallButtonsFromGWEI(state)
   const gasPrice = getGasPrice(state)
   const activeButtonIndex = getDefaultActiveButtonIndex(gasButtonInfo, gasPrice)
-  const gasEstimateType = activeButtonIndex >= 0
-    ? gasButtonInfo[activeButtonIndex].gasEstimateType
-    : 'custom'
+  const gasEstimateType =
+    activeButtonIndex >= 0
+      ? gasButtonInfo[activeButtonIndex].gasEstimateType
+      : 'custom'
   const editingTransactionId = getSendEditingTransactionId(state)
 
   return {
@@ -67,7 +67,7 @@ function mapStateToProps (state) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
     clearSend: () => dispatch(clearSend()),
     sign: ({ sendToken, to, amount, from, gas, gasPrice, data }) => {
@@ -115,6 +115,7 @@ function mapDispatchToProps (dispatch) {
       const hexPrefixedAddress = ethUtil.addHexPrefix(newAddress)
       if (addressIsNew(toAccounts, hexPrefixedAddress)) {
         // TODO: nickname, i.e. addToAddressBook(recipient, nickname)
+
         dispatch(addToAddressBook(hexPrefixedAddress, nickname))
       }
     },

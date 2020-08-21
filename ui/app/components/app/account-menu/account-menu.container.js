@@ -20,10 +20,13 @@ import AccountMenu from './account-menu.component'
 /**
  * The min amount of accounts to show search field
  */
+
 const SHOW_SEARCH_ACCOUNTS_MIN_COUNT = 5
 
-function mapStateToProps (state) {
-  const { metamask: { isAccountMenuOpen } } = state
+function mapStateToProps(state) {
+  const {
+    metamask: { isAccountMenuOpen },
+  } = state
   const accounts = getMetaMaskAccountsOrdered(state)
   const origin = getOriginOfCurrentTab(state)
   const selectedAddress = getSelectedAddress(state)
@@ -39,7 +42,7 @@ function mapStateToProps (state) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
     toggleAccountMenu: () => dispatch(toggleAccountMenu()),
     showAccountDetail: (address) => {

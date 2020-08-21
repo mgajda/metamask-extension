@@ -6,7 +6,6 @@ import PermissionsConnectFooter from '../permissions-connect-footer'
 import { PermissionPageContainerContent } from '.'
 
 export default class PermissionPageContainer extends Component {
-
   static propTypes = {
     approvePermissionsRequest: PropTypes.func.isRequired,
     rejectPermissionsRequest: PropTypes.func.isRequired,
@@ -41,28 +40,26 @@ export default class PermissionPageContainer extends Component {
     ),
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     const newMethodNames = this.getRequestedMethodNames(this.props)
 
     if (!isEqual(Object.keys(this.state.selectedPermissions), newMethodNames)) {
       // this should be a new request, so just overwrite
+
       this.setState({
         selectedPermissions: this.getRequestedMethodState(newMethodNames),
       })
     }
   }
 
-  getRequestedMethodState (methodNames) {
-    return methodNames.reduce(
-      (acc, methodName) => {
-        acc[methodName] = true
-        return acc
-      },
-      {},
-    )
+  getRequestedMethodState(methodNames) {
+    return methodNames.reduce((acc, methodName) => {
+      acc[methodName] = true
+      return acc
+    }, {})
   }
 
-  getRequestedMethodNames (props) {
+  getRequestedMethodNames(props) {
     return Object.keys(props.request.permissions || {})
   }
 
@@ -75,7 +72,7 @@ export default class PermissionPageContainer extends Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.context.metricsEvent({
       eventOpts: {
         category: 'Auth',
@@ -92,7 +89,10 @@ export default class PermissionPageContainer extends Component {
 
   onSubmit = () => {
     const {
-      request: _request, approvePermissionsRequest, rejectPermissionsRequest, selectedIdentities,
+      request: _request,
+      approvePermissionsRequest,
+      rejectPermissionsRequest,
+      selectedIdentities,
     } = this.props
 
     const request = {
@@ -107,13 +107,16 @@ export default class PermissionPageContainer extends Component {
     })
 
     if (Object.keys(request.permissions).length > 0) {
-      approvePermissionsRequest(request, selectedIdentities.map((selectedIdentity) => selectedIdentity.address))
+      approvePermissionsRequest(
+        request,
+        selectedIdentities.map((selectedIdentity) => selectedIdentity.address),
+      )
     } else {
       rejectPermissionsRequest(request.metadata.id)
     }
   }
 
-  render () {
+  render() {
     const {
       requestMetadata,
       targetDomainMetadata,

@@ -29,6 +29,7 @@ const PENDING_PSEUDO_STATUS = 'pending'
  * Confirmed transactions are not especially highlighted except that their
  * status label will be the date the transaction was finalized.
  */
+
 const pendingStatusHash = {
   [SUBMITTED_STATUS]: PENDING_PSEUDO_STATUS,
   [APPROVED_STATUS]: PENDING_PSEUDO_STATUS,
@@ -45,7 +46,13 @@ const statusToClassNameHash = {
   [PENDING_PSEUDO_STATUS]: 'transaction-status--pending',
 }
 
-export default function TransactionStatus ({ status, date, error, isEarliestNonce, className }) {
+export default function TransactionStatus({
+  status,
+  date,
+  error,
+  isEarliestNonce,
+  className,
+}) {
   const t = useI18nContext()
   const tooltipText = error?.rpc?.message || error?.message
   let statusKey = status
@@ -59,9 +66,13 @@ export default function TransactionStatus ({ status, date, error, isEarliestNonc
     <Tooltip
       position="top"
       title={tooltipText}
-      wrapperClassName={classnames('transaction-status', className, statusToClassNameHash[statusKey])}
+      wrapperClassName={classnames(
+        'transaction-status',
+        className,
+        statusToClassNameHash[statusKey],
+      )}
     >
-      { statusText }
+      {statusText}
     </Tooltip>
   )
 }

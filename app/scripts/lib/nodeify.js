@@ -14,7 +14,8 @@ const callbackNoop = function (err) {
  * @param {Object} context - The context in which the fn is to be called, most often a this reference
  *
  */
-export default function nodeify (fn, context) {
+
+export default function nodeify(fn, context) {
   return function (...args) {
     const lastArg = args[args.length - 1]
     const lastArgIsCallback = typeof lastArg === 'function'
@@ -25,14 +26,18 @@ export default function nodeify (fn, context) {
     } else {
       callback = callbackNoop
     }
+
     // call the provided function and ensure result is a promise
+
     let result
     try {
       result = Promise.resolve(fn.apply(context, args))
     } catch (err) {
       result = Promise.reject(err)
     }
+
     // wire up promise resolution to callback
+
     promiseToCallback(result)(callback)
   }
 }

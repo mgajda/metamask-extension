@@ -8,10 +8,7 @@ import {
   setAlertEnabledness,
   setSelectedAddress,
 } from '../../store/actions'
-import {
-  getOriginOfCurrentTab,
-  getSelectedAddress,
-} from '../../selectors'
+import { getOriginOfCurrentTab, getSelectedAddress } from '../../selectors'
 
 // Constants
 
@@ -71,6 +68,7 @@ const slice = createSlice({
   extraReducers: {
     [actionConstants.SELECTED_ADDRESS_CHANGED]: (state) => {
       // close the alert if the account is switched while it's open
+
       if (state.state === ALERT_STATE.OPEN) {
         state.state = ALERT_STATE.CLOSED
       }

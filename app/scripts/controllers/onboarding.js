@@ -16,14 +16,15 @@ import log from 'loglevel'
  * Controller responsible for maintaining
  * state related to onboarding
  */
-export default class OnboardingController {
 
+export default class OnboardingController {
   /**
    * Creates a new controller instance
    *
    * @param {OnboardingOptions} [opts] Controller configuration parameters
    */
-  constructor (opts = {}) {
+
+  constructor(opts = {}) {
     const initialTransientState = {
       onboardingTabs: {},
     }
@@ -46,7 +47,7 @@ export default class OnboardingController {
     })
   }
 
-  setSeedPhraseBackedUp (newSeedPhraseBackUpState) {
+  setSeedPhraseBackedUp(newSeedPhraseBackUpState) {
     this.store.updateState({
       seedPhraseBackedUp: newSeedPhraseBackUpState,
     })
@@ -58,6 +59,7 @@ export default class OnboardingController {
    * @param {string} location - The location of the site registering
    * @param {string} tabId - The id of the tab registering
    */
+
   registerOnboarding = async (location, tabId) => {
     if (this.completedOnboarding) {
       log.debug('Ignoring registerOnboarding; user already onboarded')
@@ -65,7 +67,9 @@ export default class OnboardingController {
     }
     const onboardingTabs = { ...this.store.getState().onboardingTabs }
     if (!onboardingTabs[location] || onboardingTabs[location] !== tabId) {
-      log.debug(`Registering onboarding tab at location '${location}' with tabId '${tabId}'`)
+      log.debug(
+        `Registering onboarding tab at location '${location}' with tabId '${tabId}'`,
+      )
       onboardingTabs[location] = tabId
       this.store.updateState({ onboardingTabs })
     }

@@ -5,9 +5,10 @@ const version = 38
 /**
  * The purpose of this migration is to assign all users to a test group for the fullScreenVsPopup a/b test
  */
+
 export default {
   version,
-  async migrate (originalVersionedData) {
+  async migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     const state = versionedData.data
@@ -16,7 +17,7 @@ export default {
   },
 }
 
-function transformState (state) {
+function transformState(state) {
   const { ABTestController: ABTestControllerState = {} } = state
   const { abTests = {} } = ABTestControllerState
 

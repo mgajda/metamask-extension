@@ -1,4 +1,3 @@
-
 /**
  * @typedef {Object} FirstTimeState
  * @property {Object} config Initial configuration parameters
@@ -8,6 +7,7 @@
 /**
  * @type {FirstTimeState}
  */
+
 const initialState = {
   config: {},
 }

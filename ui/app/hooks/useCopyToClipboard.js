@@ -9,9 +9,10 @@ import { useTimeout } from './useTimeout'
  *
  * @return {[boolean, Function]}
  */
+
 const DEFAULT_DELAY = 3000
 
-export function useCopyToClipboard (delay = DEFAULT_DELAY) {
+export function useCopyToClipboard(delay = DEFAULT_DELAY) {
   const [copied, setCopied] = useState(false)
   const startTimeout = useTimeout(() => setCopied(false), delay, false)
 

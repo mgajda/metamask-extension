@@ -6,6 +6,7 @@ import {
 } from '../../../../../app/scripts/controllers/transactions/enums'
 import {
   // event constants
+
   TRANSACTION_CREATED_EVENT,
   TRANSACTION_SUBMITTED_EVENT,
   TRANSACTION_RESUBMITTED_EVENT,
@@ -15,6 +16,7 @@ import {
   TRANSACTION_ERRORED_EVENT,
   TRANSACTION_CANCEL_ATTEMPTED_EVENT,
   TRANSACTION_CANCEL_SUCCESS_EVENT,
+
   // status constants
   SUBMITTED_STATUS,
   CONFIRMED_STATUS,
@@ -22,11 +24,13 @@ import {
 } from './transaction-activity-log.constants'
 
 // path constants
+
 const STATUS_PATH = '/status'
 const GAS_PRICE_PATH = '/txParams/gasPrice'
 const GAS_LIMIT_PATH = '/txParams/gas'
 
 // op constants
+
 const REPLACE_OP = 'replace'
 
 const eventPathsHash = {
@@ -49,7 +53,8 @@ const statusHash = {
  * transactionCreated activity.
  * @returns {Array}
  */
-export function getActivities (transaction, isFirstTransaction = false) {
+
+export function getActivities(transaction, isFirstTransaction = false) {
   const {
     id,
     hash,
@@ -64,11 +69,17 @@ export function getActivities (transaction, isFirstTransaction = false) {
 
   const historyActivities = history.reduce((acc, base, index) => {
     // First history item should be transaction creation
+
     if (index === 0 && !Array.isArray(base) && base.txParams) {
-      const { time: timestamp, txParams: { value, gas = '0x0', gasPrice = '0x0' } = {} } = base
+      const {
+        time: timestamp,
+        txParams: { value, gas = '0x0', gasPrice = '0x0' } = {},
+      } = base
+
       // The cached gas limit and gas price are used to display the gas fee in the activity log. We
       // need to cache these values because the status update history events don't provide us with
       // the latest gas limit and gas price.
+
       cachedGasLimit = gas
       cachedGasPrice = gasPrice
 
@@ -81,28 +92,39 @@ export function getActivities (transaction, isFirstTransaction = false) {
           value,
         })
       }
+
       // An entry in the history may be an array of more sub-entries.
     } else if (Array.isArray(base)) {
       const events = []
 
       base.forEach((entry) => {
         const { op, path, value, timestamp: entryTimestamp } = entry
+
         // Not all sub-entries in a history entry have a timestamp. If the sub-entry does not have a
         // timestamp, the first sub-entry in a history entry should.
+
         const timestamp = entryTimestamp || (base[0] && base[0].timestamp)
 
         if (path in eventPathsHash && op === REPLACE_OP) {
           switch (path) {
             case STATUS_PATH: {
-              const gasFee = cachedGasLimit === '0x0' && cachedGasPrice === '0x0'
-                ? getHexGasTotal({ gasLimit: paramsGasLimit, gasPrice: paramsGasPrice })
-                : getHexGasTotal({ gasLimit: cachedGasLimit, gasPrice: cachedGasPrice })
+              const gasFee =
+                cachedGasLimit === '0x0' && cachedGasPrice === '0x0'
+                  ? getHexGasTotal({
+                      gasLimit: paramsGasLimit,
+                      gasPrice: paramsGasPrice,
+                    })
+                  : getHexGasTotal({
+                      gasLimit: cachedGasLimit,
+                      gasPrice: cachedGasPrice,
+                    })
 
               if (value in statusHash) {
                 let eventKey = statusHash[value]
 
                 // If the status is 'submitted', we need to determine whether the event is a
                 // transaction retry or a cancellation attempt.
+
                 if (value === SUBMITTED_STATUS) {
                   if (type === TRANSACTION_TYPE_RETRY) {
                     eventKey = TRANSACTION_RESUBMITTED_EVENT
@@ -130,6 +152,7 @@ export function getActivities (transaction, isFirstTransaction = false) {
             // If the gas price or gas limit has been changed, we update the gasFee of the
             // previously submitted event. These events happen when the gas limit and gas price is
             // changed at the confirm screen.
+
             case GAS_PRICE_PATH:
             case GAS_LIMIT_PATH: {
               const lastEvent = events[events.length - 1] || {}
@@ -141,8 +164,10 @@ export function getActivities (transaction, isFirstTransaction = false) {
                 cachedGasPrice = value
               }
 
-              if (lastEventKey === TRANSACTION_SUBMITTED_EVENT ||
-                lastEventKey === TRANSACTION_RESUBMITTED_EVENT) {
+              if (
+                lastEventKey === TRANSACTION_SUBMITTED_EVENT ||
+                lastEventKey === TRANSACTION_RESUBMITTED_EVENT
+              ) {
                 lastEvent.value = getHexGasTotal({
                   gasLimit: cachedGasLimit,
                   gasPrice: cachedGasPrice,
@@ -172,8 +197,13 @@ export function getActivities (transaction, isFirstTransaction = false) {
 
   // If txReceipt.status is '0x0', that means that an on-chain error occurred for the transaction,
   // so we add an error entry to the Activity Log.
+
   return status === '0x0'
-    ? historyActivities.concat({ id, hash, eventKey: TRANSACTION_ERRORED_EVENT })
+    ? historyActivities.concat({
+        id,
+        hash,
+        eventKey: TRANSACTION_ERRORED_EVENT,
+      })
     : historyActivities
 }
 
@@ -186,11 +216,16 @@ export function getActivities (transaction, isFirstTransaction = false) {
  * @param {Array} activities - List of sorted activities generated from the getActivities function.
  * @returns {Array}
  */
-function filterSortedActivities (activities) {
+
+function filterSortedActivities(activities) {
   const filteredActivities = []
-  const hasConfirmedActivity = Boolean(activities.find(({ eventKey }) => (
-    eventKey === TRANSACTION_CONFIRMED_EVENT || eventKey === TRANSACTION_CANCEL_SUCCESS_EVENT
-  )))
+  const hasConfirmedActivity = Boolean(
+    activities.find(
+      ({ eventKey }) =>
+        eventKey === TRANSACTION_CONFIRMED_EVENT ||
+        eventKey === TRANSACTION_CANCEL_SUCCESS_EVENT,
+    ),
+  )
   let addedDroppedActivity = false
 
   activities.forEach((activity) => {
@@ -212,7 +247,8 @@ function filterSortedActivities (activities) {
  * @param {Array} transactions - Array of txMeta transaction objects.
  * @returns {Array}
  */
-export function combineTransactionHistories (transactions = []) {
+
+export function combineTransactionHistories(transactions = []) {
   if (!transactions.length) {
     return []
   }
@@ -223,6 +259,7 @@ export function combineTransactionHistories (transactions = []) {
     // The first transaction should be the transaction with the earliest submittedTime. We show the
     // 'created' and 'submitted' activities here. All subsequent transactions will use 'resubmitted'
     // instead.
+
     const transactionActivities = getActivities(transaction, index === 0)
     activities.push(...transactionActivities)
   })

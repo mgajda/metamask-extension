@@ -5,12 +5,14 @@ let index = 0
 let extraSheet
 
 const insertRule = (css) => {
-
   if (!extraSheet) {
     // First time, create an extra stylesheet for adding rules
+
     extraSheet = document.createElement('style')
     document.getElementsByTagName('head')[0].appendChild(extraSheet)
+
     // Keep reference to actual StyleSheet object (`styleSheet` for IE < 9)
+
     extraSheet = extraSheet.sheet || extraSheet.styleSheet
   }
 
@@ -88,11 +90,11 @@ const animation = {
 
 const endEvents = ['transitionend', 'animationend']
 
-function addEventListener (node, eventName, eventListener) {
+function addEventListener(node, eventName, eventListener) {
   node.addEventListener(eventName, eventListener, false)
 }
 
-function removeEventListener (node, eventName, eventListener) {
+function removeEventListener(node, eventName, eventListener) {
   node.removeEventListener(eventName, eventListener, false)
 }
 
@@ -109,6 +111,7 @@ const addEndEventListener = (node, eventListener) => {
   if (endEvents.length === 0) {
     // If CSS transitions are not supported, trigger an "end animation"
     // event immediately.
+
     window.setTimeout(eventListener, 0)
     return
   }
@@ -172,7 +175,7 @@ class FadeModal extends Component {
     return this.state.hidden
   }
 
-  render () {
+  render() {
     if (this.state.hidden) {
       return null
     }
@@ -180,25 +183,31 @@ class FadeModal extends Component {
     const { willHide } = this.state
     const { modalStyle } = this.props
     const backdropStyle = {
-      animationName: willHide ? animation.hideBackdropAnimation : animation.showBackdropAnimation,
-      animationTimingFunction: (willHide ? animation.hide : animation.show).animationTimingFunction, ...this.props.backdropStyle,
+      animationName: willHide
+        ? animation.hideBackdropAnimation
+        : animation.showBackdropAnimation,
+      animationTimingFunction: (willHide ? animation.hide : animation.show)
+        .animationTimingFunction,
+      ...this.props.backdropStyle,
     }
     const contentStyle = {
-      animationDuration: (willHide ? animation.hide : animation.show).animationDuration,
-      animationName: willHide ? animation.hideContentAnimation : animation.showContentAnimation,
-      animationTimingFunction: (willHide ? animation.hide : animation.show).animationTimingFunction, ...this.props.contentStyle,
+      animationDuration: (willHide ? animation.hide : animation.show)
+        .animationDuration,
+      animationName: willHide
+        ? animation.hideContentAnimation
+        : animation.showContentAnimation,
+      animationTimingFunction: (willHide ? animation.hide : animation.show)
+        .animationTimingFunction,
+      ...this.props.contentStyle,
     }
 
-    const backdrop = this.props.backdrop
-      ? (
-        <div
-          className="modal__backdrop"
-          style={backdropStyle}
-          onClick={this.props.closeOnClick
-            ? this.handleBackdropClick
-            : null}
-        />
-      ) : undefined
+    const backdrop = this.props.backdrop ? (
+      <div
+        className="modal__backdrop"
+        style={backdropStyle}
+        onClick={this.props.closeOnClick ? this.handleBackdropClick : null}
+      />
+    ) : undefined
 
     if (willHide) {
       this.addTransitionListener(this.content, this.leave)
@@ -219,7 +228,6 @@ class FadeModal extends Component {
         {backdrop}
       </span>
     )
-
   }
 
   leave = () => {
@@ -243,9 +251,12 @@ class FadeModal extends Component {
       hidden: false,
     })
 
-    setTimeout(function () {
-      this.addTransitionListener(this.content, this.enter)
-    }.bind(this), 0)
+    setTimeout(
+      function () {
+        this.addTransitionListener(this.content, this.enter)
+      }.bind(this),
+      0,
+    )
   }
 
   hide = () => {
@@ -267,9 +278,10 @@ class FadeModal extends Component {
   }
 
   closeOnEsc = (event) => {
-    if (this.props.keyboard &&
-      (event.key === 'Escape' ||
-        event.keyCode === 27)) {
+    if (
+      this.props.keyboard &&
+      (event.key === 'Escape' || event.keyCode === 27)
+    ) {
       this.hide()
     }
   }

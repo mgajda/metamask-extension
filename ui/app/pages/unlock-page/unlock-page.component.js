@@ -32,7 +32,7 @@ export default class UnlockPage extends Component {
 
   animationEventEmitter = new EventEmitter()
 
-  UNSAFE_componentWillMount () {
+  UNSAFE_componentWillMount() {
     const { isUnlocked, history } = this.props
 
     if (isUnlocked) {
@@ -66,7 +66,10 @@ export default class UnlockPage extends Component {
         isNewVisit: true,
       })
 
-      if (newState.participateInMetaMetrics === null || newState.participateInMetaMetrics === undefined) {
+      if (
+        newState.participateInMetaMetrics === null ||
+        newState.participateInMetaMetrics === undefined
+      ) {
         showOptInModal()
       }
     } catch ({ message }) {
@@ -90,10 +93,11 @@ export default class UnlockPage extends Component {
     }
   }
 
-  handleInputChange ({ target }) {
+  handleInputChange({ target }) {
     this.setState({ password: target.value, error: null })
 
     // tell mascot to look at page action
+
     if (target.getBoundingClientRect) {
       const element = target
       const boundingRect = element.getBoundingClientRect()
@@ -105,7 +109,7 @@ export default class UnlockPage extends Component {
     }
   }
 
-  renderSubmitButton () {
+  renderSubmitButton() {
     const style = {
       backgroundColor: '#f7861c',
       color: 'white',
@@ -127,12 +131,12 @@ export default class UnlockPage extends Component {
         onClick={this.handleSubmit}
         disableRipple
       >
-        { this.context.t('unlock') }
+        {this.context.t('unlock')}
       </Button>
     )
   }
 
-  render () {
+  render() {
     const { password, error } = this.state
     const { t } = this.context
     const { onImport, onRestore } = this.props
@@ -147,14 +151,9 @@ export default class UnlockPage extends Component {
               height="120"
             />
           </div>
-          <h1 className="unlock-page__title">
-            { t('welcomeBack') }
-          </h1>
-          <div>{ t('unlockMessage') }</div>
-          <form
-            className="unlock-page__form"
-            onSubmit={this.handleSubmit}
-          >
+          <h1 className="unlock-page__title">{t('welcomeBack')}</h1>
+          <div>{t('unlockMessage')}</div>
+          <form className="unlock-page__form" onSubmit={this.handleSubmit}>
             <TextField
               id="password"
               label={t('password')}
@@ -168,19 +167,16 @@ export default class UnlockPage extends Component {
               fullWidth
             />
           </form>
-          { this.renderSubmitButton() }
+          {this.renderSubmitButton()}
           <div className="unlock-page__links">
-            <div
-              className="unlock-page__link"
-              onClick={() => onRestore()}
-            >
-              { t('restoreFromSeed') }
+            <div className="unlock-page__link" onClick={() => onRestore()}>
+              {t('restoreFromSeed')}
             </div>
             <div
               className="unlock-page__link unlock-page__link--import"
               onClick={() => onImport()}
             >
-              { t('importUsingSeed') }
+              {t('importUsingSeed')}
             </div>
           </div>
         </div>

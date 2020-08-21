@@ -7,10 +7,13 @@ const DAI_V1_CONTRACT_ADDRESS = '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359'
 const DAI_V1_TOKEN_SYMBOL = 'DAI'
 const SAI_TOKEN_SYMBOL = 'SAI'
 
-function isOldDai (token = {}) {
-  return token && typeof token === 'object' &&
+function isOldDai(token = {}) {
+  return (
+    token &&
+    typeof token === 'object' &&
     token.symbol === DAI_V1_TOKEN_SYMBOL &&
     ethUtil.toChecksumAddress(token.address) === DAI_V1_CONTRACT_ADDRESS
+  )
 }
 
 /**
@@ -20,9 +23,10 @@ function isOldDai (token = {}) {
  * Maker's upgrade to Multi-Collateral Dai and this migration renames the token
  * at the old address.
  */
+
 export default {
   version,
-  async migrate (originalVersionedData) {
+  async migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     const state = versionedData.data
@@ -31,7 +35,7 @@ export default {
   },
 }
 
-function transformState (state) {
+function transformState(state) {
   const { PreferencesController } = state
 
   if (PreferencesController) {

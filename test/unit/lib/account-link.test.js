@@ -18,6 +18,7 @@ describe('Account link', function () {
         },
         {
           // test handling of `blockExplorerUrl` for a custom RPC
+
           expected: 'https://block.explorer/address/0xabcd',
           network: 31,
           address: '0xabcd',
@@ -27,6 +28,7 @@ describe('Account link', function () {
         },
         {
           // test handling of trailing `/` in `blockExplorerUrl` for a custom RPC
+
           expected: 'https://another.block.explorer/address/0xdef0',
           network: 33,
           address: '0xdef0',

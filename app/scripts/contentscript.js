@@ -6,10 +6,14 @@ import extension from 'extensionizer'
 import PortStream from 'extension-port-stream'
 
 // These require calls need to use require to be statically recognized by browserify
+
 const fs = require('fs')
 const path = require('path')
 
-const inpageContent = fs.readFileSync(path.join(__dirname, '..', '..', 'dist', 'chrome', 'inpage.js'), 'utf8')
+const inpageContent = fs.readFileSync(
+  path.join(__dirname, '..', '..', 'dist', 'chrome', 'inpage.js'),
+  'utf8',
+)
 const inpageSuffix = `//# sourceURL=${extension.runtime.getURL('inpage.js')}\n`
 const inpageBundle = inpageContent + inpageSuffix
 
@@ -30,7 +34,8 @@ if (shouldInjectProvider()) {
  *
  * @param {string} content - Code to be executed in the current document
  */
-function injectScript (content) {
+
+function injectScript(content) {
   try {
     const container = document.head || document.documentElement
     const scriptTag = document.createElement('script')
@@ -47,7 +52,8 @@ function injectScript (content) {
  * Sets up the stream communication and submits site metadata
  *
  */
-async function start () {
+
+async function start() {
   await setupStreams()
   await domIsReady()
 }
@@ -57,8 +63,10 @@ async function start () {
  * browser extension and local per-page browser context.
  *
  */
-async function setupStreams () {
+
+async function setupStreams() {
   // the transport-specific streams for communication between inpage and background
+
   const pageStream = new LocalMessageDuplexStream({
     name: 'contentscript',
     target: 'inpage',
@@ -68,41 +76,38 @@ async function setupStreams () {
 
   // create and connect channel muxers
   // so we can handle the channels individually
+
   const pageMux = new ObjectMultiplex()
   pageMux.setMaxListeners(25)
   const extensionMux = new ObjectMultiplex()
   extensionMux.setMaxListeners(25)
 
-  pump(
-    pageMux,
-    pageStream,
-    pageMux,
-    (err) => logStreamDisconnectWarning('MetaMask Inpage Multiplex', err),
+  pump(pageMux, pageStream, pageMux, (err) =>
+    logStreamDisconnectWarning('MetaMask Inpage Multiplex', err),
   )
-  pump(
-    extensionMux,
-    extensionStream,
-    extensionMux,
-    (err) => logStreamDisconnectWarning('MetaMask Background Multiplex', err),
+  pump(extensionMux, extensionStream, extensionMux, (err) =>
+    logStreamDisconnectWarning('MetaMask Background Multiplex', err),
   )
 
   // forward communication across inpage-background for these channels only
+
   forwardTrafficBetweenMuxers('provider', pageMux, extensionMux)
   forwardTrafficBetweenMuxers('publicConfig', pageMux, extensionMux)
 
   // connect "phishing" channel to warning system
+
   const phishingStream = extensionMux.createStream('phishing')
   phishingStream.once('data', redirectToPhishingWarning)
 }
 
-function forwardTrafficBetweenMuxers (channelName, muxA, muxB) {
+function forwardTrafficBetweenMuxers(channelName, muxA, muxB) {
   const channelA = muxA.createStream(channelName)
   const channelB = muxB.createStream(channelName)
-  pump(
-    channelA,
-    channelB,
-    channelA,
-    (err) => logStreamDisconnectWarning(`MetaMask muxed traffic for channel "${channelName}" failed.`, err),
+  pump(channelA, channelB, channelA, (err) =>
+    logStreamDisconnectWarning(
+      `MetaMask muxed traffic for channel "${channelName}" failed.`,
+      err,
+    ),
   )
 }
 
@@ -112,7 +117,8 @@ function forwardTrafficBetweenMuxers (channelName, muxA, muxB) {
  * @param {string} remoteLabel - Remote stream name
  * @param {Error} err - Stream connection error
  */
-function logStreamDisconnectWarning (remoteLabel, err) {
+
+function logStreamDisconnectWarning(remoteLabel, err) {
   let warningMsg = `MetamaskContentscript - lost connection to ${remoteLabel}`
   if (err) {
     warningMsg += `\n${err.stack}`
@@ -125,9 +131,14 @@ function logStreamDisconnectWarning (remoteLabel, err) {
  *
  * @returns {boolean} {@code true} - if the provider should be injected
  */
-function shouldInjectProvider () {
-  return doctypeCheck() && suffixCheck() &&
-    documentElementCheck() && !blockedDomainCheck()
+
+function shouldInjectProvider() {
+  return (
+    doctypeCheck() &&
+    suffixCheck() &&
+    documentElementCheck() &&
+    !blockedDomainCheck()
+  )
 }
 
 /**
@@ -135,7 +146,8 @@ function shouldInjectProvider () {
  *
  * @returns {boolean} {@code true} - if the doctype is html or if none exists
  */
-function doctypeCheck () {
+
+function doctypeCheck() {
   const { doctype } = window.document
   if (doctype) {
     return doctype.name === 'html'
@@ -152,11 +164,9 @@ function doctypeCheck () {
  *
  * @returns {boolean} - whether or not the extension of the current document is prohibited
  */
-function suffixCheck () {
-  const prohibitedTypes = [
-    /\.xml$/u,
-    /\.pdf$/u,
-  ]
+
+function suffixCheck() {
+  const prohibitedTypes = [/\.xml$/u, /\.pdf$/u]
   const currentUrl = window.location.pathname
   for (let i = 0; i < prohibitedTypes.length; i++) {
     if (prohibitedTypes[i].test(currentUrl)) {
@@ -171,7 +181,8 @@ function suffixCheck () {
  *
  * @returns {boolean} {@code true} - if the documentElement is an html node or if none exists
  */
-function documentElementCheck () {
+
+function documentElementCheck() {
   const documentElement = document.documentElement.nodeName
   if (documentElement) {
     return documentElement.toLowerCase() === 'html'
@@ -184,7 +195,8 @@ function documentElementCheck () {
  *
  * @returns {boolean} {@code true} - if the current domain is blocked
  */
-function blockedDomainCheck () {
+
+function blockedDomainCheck() {
   const blockedDomains = [
     'uscourts.gov',
     'dropbox.com',
@@ -201,7 +213,10 @@ function blockedDomainCheck () {
   let currentRegex
   for (let i = 0; i < blockedDomains.length; i++) {
     const blockedDomain = blockedDomains[i].replace('.', '\\.')
-    currentRegex = new RegExp(`(?:https?:\\/\\/)(?:(?!${blockedDomain}).)*$`, 'u')
+    currentRegex = new RegExp(
+      `(?:https?:\\/\\/)(?:(?!${blockedDomain}).)*$`,
+      'u',
+    )
     if (!currentRegex.test(currentUrl)) {
       return true
     }
@@ -212,7 +227,8 @@ function blockedDomainCheck () {
 /**
  * Redirects the current page to a phishing information page
  */
-function redirectToPhishingWarning () {
+
+function redirectToPhishingWarning() {
   console.log('MetaMask - routing to Phishing Warning component')
   const extensionURL = extension.runtime.getURL('phishing.html')
   window.location.href = `${extensionURL}#${querystring.stringify({
@@ -224,11 +240,17 @@ function redirectToPhishingWarning () {
 /**
  * Returns a promise that resolves when the DOM is loaded (does not wait for images to load)
  */
-async function domIsReady () {
+
+async function domIsReady() {
   // already loaded
+
   if (['interactive', 'complete'].includes(document.readyState)) {
     return undefined
   }
+
   // wait for load
-  return new Promise((resolve) => window.addEventListener('DOMContentLoaded', resolve, { once: true }))
+
+  return new Promise((resolve) =>
+    window.addEventListener('DOMContentLoaded', resolve, { once: true }),
+  )
 }

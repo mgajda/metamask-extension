@@ -18,15 +18,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     editTransaction: ({ txData, tokenData, tokenProps }) => {
-
       const {
         id,
-        txParams: {
-          from,
-          to: tokenAddress,
-          gas: gasLimit,
-          gasPrice,
-        } = {},
+        txParams: { from, to: tokenAddress, gas: gasLimit, gasPrice } = {},
       } = txData
 
       const { params = [] } = tokenData
@@ -38,20 +32,22 @@ const mapDispatchToProps = (dispatch) => {
         toNumericBase: 'hex',
       })
 
-      dispatch(updateSend({
-        from,
-        gasLimit,
-        gasPrice,
-        gasTotal: null,
-        to,
-        amount: tokenAmountInHex,
-        errors: { to: null, amount: null },
-        editingTransactionId: id && id.toString(),
-        token: {
-          ...tokenProps,
-          address: tokenAddress,
-        },
-      }))
+      dispatch(
+        updateSend({
+          from,
+          gasLimit,
+          gasPrice,
+          gasTotal: null,
+          to,
+          amount: tokenAmountInHex,
+          errors: { to: null, amount: null },
+          editingTransactionId: id && id.toString(),
+          token: {
+            ...tokenProps,
+            address: tokenAddress,
+          },
+        }),
+      )
       dispatch(clearConfirmTransaction())
       dispatch(showSendTokenPage())
     },

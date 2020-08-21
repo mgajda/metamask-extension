@@ -17,6 +17,7 @@ describe('CurrencyInput container', function () {
   describe('mapStateToProps()', function () {
     const tests = [
       // Test # 1
+
       {
         comment: 'should return correct props in mainnet',
         mockState: {
@@ -43,9 +44,12 @@ describe('CurrencyInput container', function () {
           maxModeOn: false,
         },
       },
+
       // Test # 2
+
       {
-        comment: 'should return correct props when not in mainnet and showFiatInTestnets is false',
+        comment:
+          'should return correct props when not in mainnet and showFiatInTestnets is false',
         mockState: {
           metamask: {
             conversionRate: 280.45,
@@ -70,9 +74,12 @@ describe('CurrencyInput container', function () {
           maxModeOn: false,
         },
       },
+
       // Test # 3
+
       {
-        comment: 'should return correct props when not in mainnet and showFiatInTestnets is true',
+        comment:
+          'should return correct props when not in mainnet and showFiatInTestnets is true',
         mockState: {
           metamask: {
             conversionRate: 280.45,
@@ -97,9 +104,12 @@ describe('CurrencyInput container', function () {
           maxModeOn: false,
         },
       },
+
       // Test # 4
+
       {
-        comment: 'should return correct props when in mainnet and showFiatInTestnets is true',
+        comment:
+          'should return correct props when in mainnet and showFiatInTestnets is true',
         mockState: {
           metamask: {
             conversionRate: 280.45,
@@ -136,6 +146,7 @@ describe('CurrencyInput container', function () {
   describe('mergeProps()', function () {
     const tests = [
       // Test # 1
+
       {
         comment: 'should return the correct props',
         mock: {
@@ -151,12 +162,16 @@ describe('CurrencyInput container', function () {
           conversionRate: 280.45,
           currentCurrency: 'usd',
           nativeCurrency: 'ETH',
+
           // useFiat: true,
+
           nativeSuffix: 'ETH',
           fiatSuffix: 'USD',
         },
       },
+
       // Test # 1
+
       {
         comment: 'should return the correct props when useFiat is true',
         mock: {
@@ -179,10 +194,19 @@ describe('CurrencyInput container', function () {
       },
     ]
 
-    tests.forEach(({ mock: { stateProps, dispatchProps, ownProps }, expected, comment }) => {
-      it(comment, function () {
-        assert.deepEqual(mergeProps(stateProps, dispatchProps, ownProps), expected)
-      })
-    })
+    tests.forEach(
+      ({
+        mock: { stateProps, dispatchProps, ownProps },
+        expected,
+        comment,
+      }) => {
+        it(comment, function () {
+          assert.deepEqual(
+            mergeProps(stateProps, dispatchProps, ownProps),
+            expected,
+          )
+        })
+      },
+    )
   })
 })

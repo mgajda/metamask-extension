@@ -1,10 +1,17 @@
 import { useSelector } from 'react-redux'
 import { getKnownMethodData } from '../selectors/selectors'
-import { getTransactionActionKey, getStatusKey } from '../helpers/utils/transactions.util'
+import {
+  getTransactionActionKey,
+  getStatusKey,
+} from '../helpers/utils/transactions.util'
 import { camelCaseToCapitalize } from '../helpers/utils/common.util'
 import { PRIMARY, SECONDARY } from '../helpers/constants/common'
 import { getTokenToAddress } from '../helpers/utils/token-util'
-import { formatDateWithYearContext, shortenAddress, stripHttpSchemes } from '../helpers/utils/util'
+import {
+  formatDateWithYearContext,
+  shortenAddress,
+  stripHttpSchemes,
+} from '../helpers/utils/util'
 import {
   CONTRACT_INTERACTION_KEY,
   DEPLOY_CONTRACT_ACTION_KEY,
@@ -52,17 +59,24 @@ import { useTokenData } from './useTokenData'
  * @param {Object} transactionGroup group of transactions
  * @return {TransactionDisplayData}
  */
-export function useTransactionDisplayData (transactionGroup) {
+
+export function useTransactionDisplayData(transactionGroup) {
   const knownTokens = useSelector(getTokens)
   const t = useI18nContext()
   const { initialTransaction, primaryTransaction } = transactionGroup
+
   // initialTransaction contains the data we need to derive the primary purpose of this transaction group
+
   const { transactionCategory } = initialTransaction
 
   const { from: senderAddress, to } = initialTransaction.txParams || {}
 
   // for smart contract interactions, methodData can be used to derive the name of the action being taken
-  const methodData = useSelector((state) => getKnownMethodData(state, initialTransaction?.txParams?.data)) || {}
+
+  const methodData =
+    useSelector((state) =>
+      getKnownMethodData(state, initialTransaction?.txParams?.data),
+    ) || {}
 
   const actionKey = getTransactionActionKey(initialTransaction)
   const status = getStatusKey(primaryTransaction)
@@ -76,6 +90,7 @@ export function useTransactionDisplayData (transactionGroup) {
 
   // This value is used to determine whether we should look inside txParams.data
   // to pull out and render token related information
+
   const isTokenCategory = TOKEN_CATEGORY_HASH[transactionCategory]
 
   // these values are always instantiated because they are either
@@ -84,21 +99,39 @@ export function useTransactionDisplayData (transactionGroup) {
   // transfers, we pass an additional argument to these hooks that will be
   // false for non-token transactions. This additional argument forces the
   // hook to return null
-  const token = isTokenCategory && knownTokens.find(({ address }) => address === recipientAddress)
-  const tokenData = useTokenData(initialTransaction?.txParams?.data, isTokenCategory)
-  const tokenDisplayValue = useTokenDisplayValue(initialTransaction?.txParams?.data, token, isTokenCategory)
-  const tokenFiatAmount = useTokenFiatAmount(token?.address, tokenDisplayValue, token?.symbol)
 
-  const origin = stripHttpSchemes(initialTransaction.origin || initialTransaction.msgParams?.origin || '')
+  const token =
+    isTokenCategory &&
+    knownTokens.find(({ address }) => address === recipientAddress)
+  const tokenData = useTokenData(
+    initialTransaction?.txParams?.data,
+    isTokenCategory,
+  )
+  const tokenDisplayValue = useTokenDisplayValue(
+    initialTransaction?.txParams?.data,
+    token,
+    isTokenCategory,
+  )
+  const tokenFiatAmount = useTokenFiatAmount(
+    token?.address,
+    tokenDisplayValue,
+    token?.symbol,
+  )
+
+  const origin = stripHttpSchemes(
+    initialTransaction.origin || initialTransaction.msgParams?.origin || '',
+  )
 
   let category
   let title
+
   // There are four types of transaction entries that are currently differentiated in the design
   // 1. signature request
   // 2. Send (sendEth sendTokens)
   // 3. Deposit
   // 4. Site interaction
   // 5. Approval
+
   if (transactionCategory === null || transactionCategory === undefined) {
     category = TRANSACTION_CATEGORY_SIGNATURE_REQUEST
     title = t('signatureRequest')
@@ -109,9 +142,15 @@ export function useTransactionDisplayData (transactionGroup) {
     title = t('approveSpendLimit', [token?.symbol || t('token')])
     subtitle = origin
     subtitleContainsOrigin = true
-  } else if (transactionCategory === DEPLOY_CONTRACT_ACTION_KEY || transactionCategory === CONTRACT_INTERACTION_KEY) {
+  } else if (
+    transactionCategory === DEPLOY_CONTRACT_ACTION_KEY ||
+    transactionCategory === CONTRACT_INTERACTION_KEY
+  ) {
     category = TRANSACTION_CATEGORY_INTERACTION
-    title = (methodData?.name && camelCaseToCapitalize(methodData.name)) || (actionKey && t(actionKey)) || ''
+    title =
+      (methodData?.name && camelCaseToCapitalize(methodData.name)) ||
+      (actionKey && t(actionKey)) ||
+      ''
     subtitle = origin
     subtitleContainsOrigin = true
   } else if (transactionCategory === INCOMING_TRANSACTION) {
@@ -119,7 +158,10 @@ export function useTransactionDisplayData (transactionGroup) {
     title = t('receive')
     prefix = ''
     subtitle = t('fromAddress', [shortenAddress(senderAddress)])
-  } else if (transactionCategory === TOKEN_METHOD_TRANSFER_FROM || transactionCategory === TOKEN_METHOD_TRANSFER) {
+  } else if (
+    transactionCategory === TOKEN_METHOD_TRANSFER_FROM ||
+    transactionCategory === TOKEN_METHOD_TRANSFER
+  ) {
     category = TRANSACTION_CATEGORY_SEND
     title = t('sendSpecifiedTokens', [token?.symbol || t('token')])
     recipientAddress = getTokenToAddress(tokenData.params)
@@ -156,7 +198,8 @@ export function useTransactionDisplayData (transactionGroup) {
     primaryCurrency,
     senderAddress,
     recipientAddress,
-    secondaryCurrency: isTokenCategory && !tokenFiatAmount ? undefined : secondaryCurrency,
+    secondaryCurrency:
+      isTokenCategory && !tokenFiatAmount ? undefined : secondaryCurrency,
     status,
     isPending: status in PENDING_STATUS_HASH,
   }

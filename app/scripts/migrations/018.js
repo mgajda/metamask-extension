@@ -15,7 +15,7 @@ const version = 18
 export default {
   version,
 
-  migrate (originalVersionedData) {
+  migrate(originalVersionedData) {
     const versionedData = cloneDeep(originalVersionedData)
     versionedData.meta.version = version
     try {
@@ -29,26 +29,28 @@ export default {
   },
 }
 
-function transformState (state) {
+function transformState(state) {
   const newState = state
   const { TransactionController } = newState
   if (TransactionController && TransactionController.transactions) {
     const { transactions } = newState.TransactionController
     newState.TransactionController.transactions = transactions.map((txMeta) => {
       // no history: initialize
+
       if (!txMeta.history || txMeta.history.length === 0) {
         const snapshot = snapshotFromTxMeta(txMeta)
         txMeta.history = [snapshot]
         return txMeta
       }
+
       // has history: migrate
-      const newHistory = (
-        migrateFromSnapshotsToDiffs(txMeta.history)
+
+      const newHistory = migrateFromSnapshotsToDiffs(txMeta.history)
         // remove empty diffs
-          .filter((entry) => {
-            return !Array.isArray(entry) || entry.length > 0
-          })
-      )
+
+        .filter((entry) => {
+          return !Array.isArray(entry) || entry.length > 0
+        })
       txMeta.history = newHistory
       return txMeta
     })
